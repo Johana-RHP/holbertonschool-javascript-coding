@@ -1,21 +1,19 @@
 #!/usr/bin/node
 const request = require('request');
+let nFilms = 0;
 
-if (process.argv.length !== 3) {
-  console.error('Usage: node 4-starwars_count.js <API_URL>');
-  process.exit(1);
-}
-
-const apiUrl = process.argv[2];
-const characterId = 18;
-
-request(apiUrl, (error, response, body) => {
-  if (!error && response.statusCode === 200) {
-    const filmsData = JSON.parse(body).results;
-    const count = filmsData.filter(film => film.characters.includes(characterId)).length;
-    console.log(count);
-  } else {
-    console.error('Error: Unable to retrieve data from the API.');
+request(process.argv[2], function (err, response, body) {
+  if (err == null) {
+    const resp = JSON.parse(body);
+    const results = resp.results;
+    for (let i = 0; i < results.length; i++) {
+      const characters = results[i].characters;
+      for (let j = 0; j < characters.length; j++) {
+        if (characters[j].search('18') > 0) {
+          nFilms++;
+        }
+      }
+    }
   }
+  console.log(nFilms);
 });
-
